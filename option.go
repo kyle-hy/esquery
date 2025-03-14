@@ -188,3 +188,11 @@ func WithValidationMethod(value string) Option {
 		m["validation_method"] = value
 	}
 }
+
+// WithNumCandidates 指定候选文档个数，平衡性能和精度
+// @param value 候选个数
+func WithNumCandidates(value int) Option {
+	return func(m Map) {
+		m["numCandidates"] = value
+	}
+}
