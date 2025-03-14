@@ -100,10 +100,91 @@ func WithType(value string) Option {
 	}
 }
 
+// format 日期格式少量枚举
+var (
+	Format1      = "yyyy-MM-dd"          // "2024-03-14"
+	Format2      = "yyyy/MM/dd"          // "2024/03/14"
+	Format3      = "yyyy-MM-dd HH:mm:ss" // "2024-03-14 23:59:59"
+	Format4      = "yyyy/MM/dd HH:mm:ss" // "2024/03/14 23:59:59"
+	FormatSecond = "epoch_second"        // Unix 时间戳（秒）
+	FormatMillis = "epoch_millis"        // Unix 时间戳（毫秒）
+)
+
 // WithFormat 日期格式
 // @param value 日期格式（如 "yyyy-MM-dd"）
 func WithFormat(value string) Option {
 	return func(m Map) {
 		m["format"] = value
+	}
+}
+
+// 控制评分模式
+var (
+	AVG = "avg" //（默认）：取所有匹配文档得分的平均值。
+	MIN = "min" // 取最低得分。
+	MAX = "max" // 取最高得分。
+	SUM = "sum" // 取所有匹配文档得分的总和。
+	// NONE = "none" // 不计算得分。
+)
+
+// WithScoreMode 评分模式
+// @param value 日期格式（如 "yyyy-MM-dd"）
+func WithScoreMode(value string) Option {
+	return func(m Map) {
+		m["score_mode"] = value
+	}
+}
+
+// WithParams 传递参数
+// @param key 参数名
+// @param value 参数值
+func WithParams(key string, value any) Option {
+	return func(m Map) {
+		m[key] = value
+	}
+}
+
+// WithCaseInsensitive 大小写敏感
+// @param value 是否大小写敏感，默认false
+func WithCaseInsensitive(value bool) Option {
+	return func(m Map) {
+		m["case_insensitive"] = value
+	}
+}
+
+// WithIgnoreUnmapped 未映射字段处理
+// @param value 是否忽略，默认false
+func WithIgnoreUnmapped(value bool) Option {
+	return func(m Map) {
+		m["ignore_unmapped"] = value
+	}
+}
+
+// 验证地理坐标方式
+var (
+	ARC   = "arc"   // 默认,使用球面几何计算距离，精度高但性能较低
+	Plane = "plane" // 平面几何计算距离，性能较高但精度较低（适用于小范围）
+)
+
+// WithDistanceType 计算距离的方式
+// @param value 是否忽略，默认false
+func WithDistanceType(value string) Option {
+	return func(m Map) {
+		m["distance_type"] = value
+	}
+}
+
+// 验证地理坐标方式
+var (
+	Strict          = "STRICT"           // 严格验证，无效坐标会抛出异常
+	IgnoreMalformed = "IGNORE_MALFORMED" // 忽略无效坐标
+	Coerce          = "COERCE"           // 尝试修正无效坐标
+)
+
+// WithValidationMethod 指定如何验证地理坐标
+// @param value 是否忽略，默认false
+func WithValidationMethod(value string) Option {
+	return func(m Map) {
+		m["validation_method"] = value
 	}
 }

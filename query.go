@@ -36,6 +36,7 @@ func TermsQuery(field string, values []any, opts ...Option) Map {
 // MatchQuery 构造 Match 查询, 全文检索(模糊匹配、分词搜索、相关度评分)
 // @param field 查询字段
 // @param value 查询值, 进行分词
+// @param opts option不定参数
 func MatchQuery(field string, value any, opts ...Option) Map {
 	paramMap := newOptMap(opts)
 	paramMap[field] = value
@@ -43,6 +44,9 @@ func MatchQuery(field string, value any, opts ...Option) Map {
 }
 
 // MultiMatchQuery 构造MultiMatch查询, match查询的多字段版本，专为多字段搜索设计
+// @param query 查询值
+// @param fields 查询字段列表
+// @param opts option不定参数
 func MultiMatchQuery(query string, fields []string, opts ...Option) Map {
 	paramMap := newOptMap(opts)
 	paramMap["query"] = query
@@ -51,10 +55,26 @@ func MultiMatchQuery(query string, fields []string, opts ...Option) Map {
 }
 
 // RangeQuery 构造 Range 查询
-func RangeQuery(field string, gte, lte any, opts ...Option) Map {
+// @param field 查询字段
+// @param gte (>=)大于等于指定值
+// @param gt (>)大于指定值
+// @param lt (<)小于指定值
+// @param lte (<=)小于等于指定值
+// @param opts option不定参数
+func RangeQuery(field string, gte, gt, lt, lte any, opts ...Option) Map {
 	paramMap := newOptMap(opts)
-	paramMap["gte"] = gte
-	paramMap["lte"] = lte
+	if gte != nil {
+		paramMap["gte"] = gte
+	}
+	if gt != nil {
+		paramMap["gt"] = gt
+	}
+	if lt != nil {
+		paramMap["lt"] = lt
+	}
+	if lte != nil {
+		paramMap["lte"] = lte
+	}
 	return Map{
 		"range": Map{
 			field: paramMap,
@@ -62,37 +82,51 @@ func RangeQuery(field string, gte, lte any, opts ...Option) Map {
 	}
 }
 
-// NestedQuery 构造 Nested 查询
-func NestedQuery(path string, query Map) Map {
+// NestedQuery 构造Nested查询, 用于在嵌套字段（nested type）文档中执行独立的查询
+// @param path 索引路径(名称)
+// @param query 查询语句
+// @param opts option不定参数
+func NestedQuery(path string, query Map, opts ...Option) Map {
+	paramMap := newOptMap(opts)
+	paramMap["path"] = path
+	paramMap["query"] = query
 	return Map{
-		"nested": Map{
-			"path":  path,
-			"query": query,
-		},
+		"nested": paramMap,
 	}
 }
 
-// ScriptScoreQuery 构造 Script Score 查询
-func ScriptScoreQuery(script string) Map {
+// ScriptScoreQuery 构造Script Score查询, 通过自定义脚本计算每个文档的得分
+// @param query 查询语句
+// @param script 计算score脚本
+// @param opts option不定参数, 为script指定参数
+func ScriptScoreQuery(query Map, script string, opts ...Option) Map {
+	paramMap := newOptMap(opts)
 	return Map{
 		"script_score": Map{
+			"query": query,
 			"script": Map{
 				"source": script,
+				"params": paramMap,
 			},
 		},
 	}
 }
 
-// WildcardQuery 构造 Wildcard 查询
-func WildcardQuery(field string, value string) Map {
+// WildcardQuery 构造Wildcard查询, 基于通配符的字符串匹配
+// @param field 查询字段
+// @param value 通配符表达式
+// @param opts option不定参数, 为script指定参数
+func WildcardQuery(field string, value string, opts ...Option) Map {
+	paramMap := newOptMap(opts)
+	paramMap["value"] = value
 	return Map{
 		"wildcard": Map{
-			field: value,
+			field: paramMap,
 		},
 	}
 }
 
-// ExistsQuery 构造 Exists 查询
+// ExistsQuery 构造Exists查询,判断某个字段是否存在
 func ExistsQuery(field string) Map {
 	return Map{
 		"exists": Map{

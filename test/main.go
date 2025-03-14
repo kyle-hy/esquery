@@ -24,7 +24,7 @@ func main() {
 	}
 
 	filterQueries := []ep.Map{
-		ep.RangeQuery("price", 100, 200),
+		ep.RangeQuery("price", 100, nil, 200, nil),
 		ep.ExistsQuery("stock"),
 	}
 
