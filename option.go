@@ -3,8 +3,8 @@ package esquery
 // Option ES 各种参数属性
 type Option func(Map)
 
-// newOptMap 构造属性
-func newOptMap(opts []Option) Map {
+// NewOptMap 构造属性
+func NewOptMap(opts ...Option) Map {
 	m := make(Map)
 	for _, opt := range opts {
 		opt(m)
@@ -194,5 +194,203 @@ func WithValidationMethod(value string) Option {
 func WithNumCandidates(value int) Option {
 	return func(m Map) {
 		m["numCandidates"] = value
+	}
+}
+
+// WithTopK 指定返回的记录数
+// @param value 记录条数
+func WithTopK(value int) Option {
+	return func(m Map) {
+		m["k"] = value
+	}
+}
+
+// WithSize 指定每页返回的记录数/聚合查询返回的桶数量
+// @param value 记录条数
+func WithSize(value int) Option {
+	return func(m Map) {
+		m["size"] = value
+	}
+}
+
+// 聚合通用参数
+
+// WithFrom 设置结果的起始偏移量，用于分页
+func WithFrom(from int) Option {
+	return func(m Map) {
+		m["from"] = from
+	}
+}
+
+// WithSort 设置聚合结果的排序方式
+func WithSort(sort Map) Option {
+	return func(m Map) {
+		m["sort"] = sort
+	}
+}
+
+// WithOrder 设置桶的排序规则，如按文档数量或某字段值排序
+func WithOrder(order Map) Option {
+	return func(m Map) {
+		m["order"] = order
+	}
+}
+
+// Terms 聚合
+
+// WithShardSize 设置每个分片返回的桶数，影响最终结果的精确度
+func WithShardSize(shardSize int) Option {
+	return func(m Map) {
+		m["shard_size"] = shardSize
+	}
+}
+
+// Range 聚合
+
+// WithRanges 设置数值范围聚合的区间
+func WithRanges(ranges []Map) Option {
+	return func(m Map) {
+		m["ranges"] = ranges
+	}
+}
+
+// Histogram & Date Histogram 聚合
+
+// WithInterval 设置直方图聚合的间隔大小（适用于数值或时间字段）
+func WithInterval(interval interface{}) Option {
+	return func(m Map) {
+		m["interval"] = interval
+	}
+}
+
+// WithTimeZone 设置日期直方图的时区
+func WithTimeZone(timeZone string) Option {
+	return func(m Map) {
+		m["time_zone"] = timeZone
+	}
+}
+
+// Geo Distance 聚合
+
+// WithOrigin 设置地理距离聚合的中心点
+func WithOrigin(origin interface{}) Option {
+	return func(m Map) {
+		m["origin"] = origin
+	}
+}
+
+// GeoHash Grid 聚合
+
+// WithPrecision 设置地理网格聚合的精度
+func WithPrecision(precision int) Option {
+	return func(m Map) {
+		m["precision"] = precision
+	}
+}
+
+// Nested 聚合
+
+// WithPath 设置嵌套文档聚合的路径
+func WithPath(path string) Option {
+	return func(m Map) {
+		m["path"] = path
+	}
+}
+
+// Adjacency Matrix 聚合
+
+// WithFilters 设置邻接矩阵聚合的过滤条件
+func WithFilters(filters Map) Option {
+	return func(m Map) {
+		m["filters"] = filters
+	}
+}
+
+// Top Hits 聚合
+
+// WithHighlight 设置 Top Hits 聚合的高亮显示
+func WithHighlight(highlight Map) Option {
+	return func(m Map) {
+		m["highlight"] = highlight
+	}
+}
+
+// Composite 聚合
+
+// WithSources 设置 Composite 聚合的数据来源字段
+func WithSources(sources []Map) Option {
+	return func(m Map) {
+		m["sources"] = sources
+	}
+}
+
+// WithAfter 设置 Composite 聚合的游标，用于分页查询
+func WithAfter(after Map) Option {
+	return func(m Map) {
+		m["after"] = after
+	}
+}
+
+// Missing 聚合
+
+// WithDefaultValue 设置 Missing 聚合的默认值
+func WithDefaultValue(defaultValue interface{}) Option {
+	return func(m Map) {
+		m["default"] = defaultValue
+	}
+}
+
+// Sum of Squares 聚合
+
+// WithFields 设置 Sum of Squares 聚合的字段列表
+func WithFields(fields []string) Option {
+	return func(m Map) {
+		m["fields"] = fields
+	}
+}
+
+// Bucket Selector 聚合
+
+// WithScript 设置 Bucket Selector 聚合的脚本
+func WithScript(script string) Option {
+	return func(m Map) {
+		m["script"] = script
+	}
+}
+
+// WithBucketsPath 设置 Bucket Selector 聚合的路径映射
+func WithBucketsPath(bucketsPath Map) Option {
+	return func(m Map) {
+		m["buckets_path"] = bucketsPath
+	}
+}
+
+// Scripted Metric 聚合
+
+// WithInitScript 设置 Scripted Metric 聚合的初始化脚本
+func WithInitScript(initScript string) Option {
+	return func(m Map) {
+		m["init_script"] = initScript
+	}
+}
+
+// WithMapScript 设置 Scripted Metric 聚合的映射脚本
+func WithMapScript(mapScript string) Option {
+	return func(m Map) {
+		m["map_script"] = mapScript
+	}
+}
+
+// WithCombineScript 设置 Scripted Metric 聚合的合并脚本
+func WithCombineScript(combineScript string) Option {
+	return func(m Map) {
+		m["combine_script"] = combineScript
+	}
+}
+
+// WithReduceScript 设置 Scripted Metric 聚合的归约脚本
+func WithReduceScript(reduceScript string) Option {
+	return func(m Map) {
+		m["reduce_script"] = reduceScript
 	}
 }
