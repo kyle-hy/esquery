@@ -1,16 +1,31 @@
 package esquery
 
+import (
+	"bytes"
+	"encoding/json"
+)
+
 // Map 用于表示 Elasticsearch 查询的键值对
 type Map = map[string]any
 
 // ESQuery 定义主查询结构
 type ESQuery struct {
-	Index string `json:"index"`          // 索引名
-	Query Map    `json:"query"`          // 查询条件
-	Sort  []Map  `json:"sort,omitempty"` // 排序条件
-	From  int    `json:"from,omitempty"` // 分页起始位置
-	Size  int    `json:"size,omitempty"` // 每页返回条数
-	Aggs  Map    `json:"aggs,omitempty"` // 聚合条件
+	Query Map   `json:"query"`          // 查询条件
+	Sort  []Map `json:"sort,omitempty"` // 排序条件
+	Aggs  Map   `json:"aggs,omitempty"` // 聚合条件
+}
+
+// JSON json序列化
+func (eq *ESQuery) JSON() *bytes.Buffer {
+	var buf bytes.Buffer
+	_ = json.NewEncoder(&buf).Encode(eq)
+	return &buf
+}
+
+// Bool 构造Bool查询（支持 must、should、filter、must_not等）
+func Bool(opts ...Option) Map {
+	paramMap := NewOptMap(opts...)
+	return Map{"bool": paramMap}
 }
 
 // Term 构造 Term 查询, 进行精确匹配
@@ -160,27 +175,4 @@ func Knn(field string, vector []float32, filter []Map, opts ...Option) Map {
 		paramMap["filter"] = filter
 	}
 	return Map{"knn": paramMap}
-}
-
-// Bool 构造Bool查询（支持 must、should、filter、must_not、minimum_should_match、boost）
-// @param must                  所有条件必须匹配
-// @param should                至少一个或minimumShouldMatch个条件必须
-// @param filter                过滤器（不影响评分）
-// @param mustNot               所有条件必须不匹配
-func Bool(must, should, filter, mustNot []Map, opts ...Option) Map {
-	paramMap := NewOptMap(opts...)
-	if len(must) > 0 {
-		paramMap["must"] = must
-	}
-	if len(should) > 0 {
-		paramMap["should"] = should
-	}
-	if len(filter) > 0 {
-		paramMap["filter"] = filter
-	}
-	if len(mustNot) > 0 {
-		paramMap["must_not"] = mustNot
-	}
-
-	return Map{"bool": paramMap}
 }

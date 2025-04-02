@@ -12,6 +12,38 @@ func NewOptMap(opts ...Option) Map {
 	return m
 }
 
+// WithMust Bool查询的must子句
+// @param value must查询条件
+func WithMust(value any) Option {
+	return func(m Map) {
+		m["must"] = value
+	}
+}
+
+// WithShould Bool查询的should子句
+// @param value should查询条件
+func WithShould(value any) Option {
+	return func(m Map) {
+		m["should"] = value
+	}
+}
+
+// WithFilter Bool查询的filter子句
+// @param value filter查询条件
+func WithFilter(value any) Option {
+	return func(m Map) {
+		m["filter"] = value
+	}
+}
+
+// WithMustNot Bool查询的must_not子句
+// @param value must_not查询条件
+func WithMustNot(value any) Option {
+	return func(m Map) {
+		m["must_not"] = value
+	}
+}
+
 // WithBoost 提升某个字段在相关度评分中的优先级
 // @param value 权重值
 func WithBoost(value any) Option {
@@ -392,5 +424,26 @@ func WithCombineScript(combineScript string) Option {
 func WithReduceScript(reduceScript string) Option {
 	return func(m Map) {
 		m["reduce_script"] = reduceScript
+	}
+}
+
+// WithCountOrder 按照桶的文档数量进行排序，可以是 "asc" 或 "desc"
+func WithCountOrder(orderDirection string) Map {
+	return Map{
+		"_count": orderDirection, // 按桶的文档数量排序，可以是 "asc" 或 "desc"
+	}
+}
+
+// WithTermOrder 按照桶的字段值进行排序，可以是 "asc" 或 "desc"
+func WithTermOrder(orderDirection string) Map {
+	return Map{
+		"_term": orderDirection, // 按桶的字段值排序，
+	}
+}
+
+// WithCustomOrder 自定义字段排序，可以是 "asc" 或 "desc"
+func WithCustomOrder(field, orderDirection string) Map {
+	return Map{
+		field: orderDirection, // 按自定义字段排序，可以是 "asc" 或 "desc"
 	}
 }
