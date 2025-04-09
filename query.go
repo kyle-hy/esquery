@@ -167,12 +167,9 @@ func GeoDistance(field string, lat, lon float64, distance string, opts ...Option
 // @param vector 查询向量
 // @param filter 过滤条件
 // @param opts option不定参数
-func Knn(field string, vector []float32, filter []Map, opts ...Option) Map {
+func Knn(field string, vector []float32, opts ...Option) Map {
 	paramMap := NewOptMap(opts...)
 	paramMap["field"] = field
 	paramMap["query_vector"] = vector
-	if filter != nil {
-		paramMap["filter"] = filter
-	}
 	return Map{"knn": paramMap}
 }

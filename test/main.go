@@ -3,8 +3,12 @@ package main
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"log"
+	"strconv"
+	"strings"
+	"time"
 
 	"github.com/elastic/go-elasticsearch/v8"
 	eq "github.com/kyle-hy/esquery"
@@ -55,6 +59,113 @@ func TestEsQuery() {
 
 }
 
+// StringInt create a type alias for type int
+type StringInt int
+
+// UnmarshalJSON create a custom unmarshal for the StringInt
+// / this helps us check the type of our value before unmarshalling it
+func (st *StringInt) UnmarshalJSON(b []byte) error {
+	//convert the bytes into an interface
+	//this will help us check the type of our value
+	//if it is a string that can be converted into a int we convert it
+	///otherwise we return an error
+	var item any
+	if err := json.Unmarshal(b, &item); err != nil {
+		return err
+	}
+	switch v := item.(type) {
+	case int:
+		*st = StringInt(v)
+	case float64:
+		*st = StringInt(int(v))
+	case string:
+		///here convert the string into
+		///an integer
+		i, err := strconv.Atoi(v)
+		if err != nil {
+			///the string might not be of integer type
+			///so return an error
+			return err
+
+		}
+		*st = StringInt(i)
+
+	}
+	return nil
+}
+
+// 日期类型
+var (
+	ErrInvalidDateFormat = errors.New("invalid date format")
+)
+
+// SmartDate 支持多种格式和时间戳自动解析的时间类型（适配 date 和 date_nanos）
+type SmartDate struct {
+	time.Time
+}
+
+// 支持的字符串格式（按优先顺序）
+var supportedFormats = []string{
+	time.RFC3339Nano,      // 2006-01-02T15:04:05.999999999Z07:00
+	time.RFC3339,          // 2006-01-02T15:04:05Z07:00
+	"2006-01-02",          // 1992-06-01
+	"2006/01/02",          // 1992/06/01
+	"2006-01-02 15:04:05", // 1992-06-01 12:30:45
+}
+
+// UnmarshalJSON 自动支持多种时间格式和时间戳（纳秒、毫秒、秒）
+func (sd *SmartDate) UnmarshalJSON(b []byte) error {
+	s := strings.Trim(string(b), `"`)
+	if s == "" || s == "null" {
+		return nil
+	}
+
+	// 尝试解析为整数时间戳（可能是秒/ms/ns）
+	if ts, err := strconv.ParseInt(s, 10, 64); err == nil {
+		switch len(s) {
+		case 10: // 秒
+			sd.Time = time.Unix(ts, 0)
+		case 13: // 毫秒
+			sd.Time = time.UnixMilli(ts)
+		case 16: // 微秒
+			sd.Time = time.Unix(0, ts*1e3)
+		case 19: // 纳秒
+			sd.Time = time.Unix(0, ts)
+		default:
+			return errors.New("unsupported numeric timestamp length")
+		}
+		return nil
+	}
+
+	// 依次尝试已知格式
+	for _, layout := range supportedFormats {
+		if t, err := time.Parse(layout, s); err == nil {
+			sd.Time = t
+			return nil
+		}
+	}
+
+	return errors.New("unsupported time format: " + s)
+}
+
+// MarshalJSON 序列化为 RFC3339 格式字符串
+func (sd SmartDate) MarshalJSON() ([]byte, error) {
+	return json.Marshal(sd.Time.Format(time.RFC3339))
+}
+
+// String 返回可读格式
+func (sd SmartDate) String() string {
+	return sd.Time.Format("2006-01-02")
+}
+
+// Books .
+type Books struct {
+	Name        string    `json:"name"`         // 书名
+	Author      string    `json:"author"`       // 作者
+	ReleaseDate SmartDate `json:"release_date"` // 出版日期
+	PageCount   StringInt `json:"page_count"`   // 页数
+}
+
 // ...
 func main() {
 	// TestEsQuery()
@@ -63,6 +174,7 @@ func main() {
 	cfg := elasticsearch.Config{
 		Addresses: []string{
 			"http://localhost:9200/",
+			// "https://192.168.33.1:9200/",
 		},
 		APIKey: "",
 	}
@@ -74,8 +186,9 @@ func main() {
 
 	// // 构造 Elasticsearch 查询
 	esQuery := eq.ESQuery{
-		Query: eq.Bool(eq.WithMust([]eq.Map{eq.Match("name", "snow")})),
-		Aggs:  eq.TermsAgg("name.keyword", eq.WithSize(2)),
+		// Query: eq.Bool(eq.WithMust([]eq.Map{eq.Match("name", "snow")})),
+		Query: eq.Match("name", "snow"),
+		Aggs:  eq.TermsAgg("name.keyword", eq.WithSize(8)),
 	}
 	fmt.Println(esQuery.JSON())
 
@@ -88,4 +201,16 @@ func main() {
 	)
 
 	fmt.Println(searchResp, err)
+	fmt.Printf("-----\n\n")
+
+	l, t, err := eq.QueryList[Books](es, "books", esQuery)
+	lj, _ := json.Marshal(l)
+	fmt.Printf("%+v\n", string(lj))
+	fmt.Println(t)
+	fmt.Println(err)
+
+	raw, err := eq.QueryAgg[eq.TermsAggResult](es, "books", esQuery)
+	fmt.Println(raw)
+	fmt.Println(err)
+
 }
