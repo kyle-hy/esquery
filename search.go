@@ -12,7 +12,7 @@ import (
 
 // QueryList 查询详情及总数
 func QueryList[T any](es *elasticsearch.Client, index string, queryBody any,
-) ([]T, int, error) {
+) ([]*T, int, error) {
 	hits, total, _, _, err := QueryWithMeta[T](es, index, queryBody)
 	return hits, total, err
 }
@@ -47,7 +47,7 @@ func QueryAggRaw(es *elasticsearch.Client, index string, queryBody any,
 
 // QueryWithMeta 检索及聚合分析结果
 func QueryWithMeta[T any](es *elasticsearch.Client, index string, queryBody any,
-) ([]T, int, map[string]json.RawMessage, []string, error) {
+) ([]*T, int, map[string]json.RawMessage, []string, error) {
 	queryBytes, err := json.Marshal(queryBody)
 	if err != nil {
 		return nil, 0, nil, nil, fmt.Errorf("marshal query failed: %w", err)
@@ -76,7 +76,7 @@ func QueryWithMeta[T any](es *elasticsearch.Client, index string, queryBody any,
 		return nil, 0, nil, nil, fmt.Errorf("decode response failed: %w", err)
 	}
 
-	var results []T
+	var results []*T
 	var ids []string
 	for _, hit := range parsed.Hits.Hits {
 		results = append(results, hit.Source)
