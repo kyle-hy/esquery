@@ -13,11 +13,18 @@ type QueryInfo struct {
 	Query string // 查询语句DSL
 }
 
+// Data 查询信息，用于重入如分页查询等
+type Data struct {
+	Detial any `json:"detail,omitempty"` // 详细数据
+	Agg    any `json:"agg,omitempty"`    // 聚合数据
+	Total  int `json:"total,omitempty"`  // 总记录数
+}
+
 // ESQuery 定义主查询结构
 type ESQuery struct {
 	Query Map   `json:"query"`          // 查询条件
 	Sort  []Map `json:"sort,omitempty"` // 排序条件
-	Aggs  Map   `json:"aggs,omitempty"` // 聚合条件
+	Agg   Map   `json:"aggs,omitempty"` // 聚合条件
 }
 
 // JSON json序列化
