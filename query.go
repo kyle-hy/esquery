@@ -7,15 +7,15 @@ import (
 // Map 用于表示 Elasticsearch 查询的键值对
 type Map = map[string]any
 
-// QueryInfo 查询信息，用于重入如分页查询等
-type QueryInfo struct {
-	Index string // 查询的索引名
-	Query string // 查询语句DSL
+// Query 查询信息，用于重入如分页查询等
+type Query struct {
+	Index string   `json:"index,omitempty"` // 查询的索引名
+	DSL   *ESQuery `json:"dsl,omitempty"`   // 查询语句DSL
 }
 
 // Data 查询信息，用于重入如分页查询等
 type Data struct {
-	Detial any `json:"detail,omitempty"` // 详细数据
+	Detail any `json:"detail,omitempty"` // 详细数据
 	Agg    any `json:"agg,omitempty"`    // 聚合数据
 	Total  int `json:"total,omitempty"`  // 总记录数
 }
@@ -29,7 +29,7 @@ type ESQuery struct {
 
 // JSON json序列化
 func (eq *ESQuery) JSON() string {
-	d, _ := json.MarshalIndent(eq, "", "    ")
+	d, _ := json.Marshal(eq)
 	return string(d)
 }
 

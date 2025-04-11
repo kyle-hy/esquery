@@ -204,36 +204,50 @@ func main() {
 
 	raw, err := eq.QueryAgg[eq.TermsAggResult](es, "books", esQuery)
 	fmt.Println(raw)
-	l, t, err = QueryBooksByAuthorName(es, "Neal", "snow")
-	JPrint(l)
-	fmt.Println(t)
-
+	d, i, err := QueryBooksByNameFilterClassSeq(es, "记录", "编号", "snow")
+	JPrint(d)
+	JPrint(i)
+	fmt.Println(err)
 }
 
-// QueryBooksByName 根据name查询books的详细数据
-func QueryBooksByName(es *elasticsearch.Client, name string) ([]*Books, int, error) {
-	esQuery := eq.ESQuery{
-		Query: eq.Match("name", name),
-	}
-
-	l, t, err := eq.QueryList[Books](es, "books", esQuery)
-	if err != nil {
-		return nil, 0, err
-	}
-	return l, t, nil
-}
-
-// QueryBooksByAuthorName 根据author、name查询books的详细数据
-func QueryBooksByAuthorName(es *elasticsearch.Client, author string, name string) ([]*Books, int, error) {
-	queries := []eq.Map{
+// QueryBooksByAuthorName 对author、书名进行检索查询books的详细数据
+// author string author
+// name string 书名
+func QueryBooksByAuthorName(es *elasticsearch.Client, author string, name string) (*eq.Data, *eq.Query, error) {
+	matches := []eq.Map{
 		eq.Match("author", author),
 		eq.Match("name", name),
 	}
-	esQuery := eq.ESQuery{Query: eq.Bool(eq.WithMust(queries))}
-	fmt.Println(esQuery.JSON())
+	esQuery := &eq.ESQuery{Query: eq.Bool(eq.WithMust(matches))}
 	l, t, err := eq.QueryList[Books](es, "books", esQuery)
 	if err != nil {
-		return nil, 0, err
+		return nil, nil, err
 	}
-	return l, t, nil
+
+	data := &eq.Data{Detail: l, Total: t}
+	qinfo := &eq.Query{Index: "books", DSL: esQuery}
+	return data, qinfo, nil
+}
+
+// QueryBooksByNameFilterClassSeq 以class、seq为过滤条件对书名进行检索查询books的详细数据
+// class string class
+// seq string seq
+// name string 书名
+func QueryBooksByNameFilterClassSeq(es *elasticsearch.Client, class string, seq string, name string) (*eq.Data, *eq.Query, error) {
+	filters := []eq.Map{
+		eq.Term("class", class),
+		eq.Term("seq", seq),
+	}
+	matches := []eq.Map{
+		eq.Match("name", name),
+	}
+	esQuery := &eq.ESQuery{Query: eq.Bool(eq.WithFilter(filters), eq.WithMust(matches))}
+	l, t, err := eq.QueryList[Books](es, "books", esQuery)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	data := &eq.Data{Detail: l, Total: t}
+	qinfo := &eq.Query{Index: "books", DSL: esQuery}
+	return data, qinfo, nil
 }
