@@ -230,7 +230,7 @@ func QueryBooksByAuthorName(es *elasticsearch.Client, author string, name string
 		eq.Match("name", name),
 	}
 	esQuery := eq.ESQuery{Query: eq.Bool(eq.WithMust(queries))}
-	fmt.Println(esQuery.JSON().String())
+	fmt.Println(esQuery.JSON())
 	l, t, err := eq.QueryList[Books](es, "books", esQuery)
 	if err != nil {
 		return nil, 0, err

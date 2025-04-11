@@ -1,7 +1,6 @@
 package esquery
 
 import (
-	"bytes"
 	"encoding/json"
 )
 
@@ -22,10 +21,9 @@ type ESQuery struct {
 }
 
 // JSON json序列化
-func (eq *ESQuery) JSON() *bytes.Buffer {
-	var buf bytes.Buffer
-	_ = json.NewEncoder(&buf).Encode(eq)
-	return &buf
+func (eq *ESQuery) JSON() string {
+	d, _ := json.MarshalIndent(eq, "", "    ")
+	return string(d)
 }
 
 // Bool 构造Bool查询（支持 must、should、filter、must_not等）
