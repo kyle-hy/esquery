@@ -8,6 +8,12 @@ import (
 // Map 用于表示 Elasticsearch 查询的键值对
 type Map = map[string]any
 
+// QueryInfo 查询信息，用于重入如分页查询等
+type QueryInfo struct {
+	Index string // 查询的索引名
+	Query string // 查询语句DSL
+}
+
 // ESQuery 定义主查询结构
 type ESQuery struct {
 	Query Map   `json:"query"`          // 查询条件

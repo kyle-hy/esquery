@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -13,6 +12,12 @@ import (
 	"github.com/elastic/go-elasticsearch/v8"
 	eq "github.com/kyle-hy/esquery"
 )
+
+// JPrint json序列化后终端打印
+func JPrint(data any) {
+	jdata, _ := json.MarshalIndent(data, "", "    ")
+	fmt.Println("json:", string(jdata))
+}
 
 // TestEsQuery .
 func TestEsQuery() {
@@ -192,25 +197,43 @@ func main() {
 	}
 	fmt.Println(esQuery.JSON())
 
-	searchResp, err := es.Search(
-		es.Search.WithContext(context.Background()),
-		es.Search.WithIndex("books"),
-		es.Search.WithBody(esQuery.JSON()),
-		es.Search.WithTrackTotalHits(true),
-		es.Search.WithPretty(),
-	)
-
-	fmt.Println(searchResp, err)
-	fmt.Printf("-----\n\n")
-
 	l, t, err := eq.QueryList[Books](es, "books", esQuery)
 	lj, _ := json.Marshal(l)
 	fmt.Printf("%+v\n", string(lj))
 	fmt.Println(t)
-	fmt.Println(err)
 
 	raw, err := eq.QueryAgg[eq.TermsAggResult](es, "books", esQuery)
 	fmt.Println(raw)
-	fmt.Println(err)
+	l, t, err = QueryBooksByAuthorName(es, "Neal", "snow")
+	JPrint(l)
+	fmt.Println(t)
 
+}
+
+// QueryBooksByName 根据name查询books的详细数据
+func QueryBooksByName(es *elasticsearch.Client, name string) ([]*Books, int, error) {
+	esQuery := eq.ESQuery{
+		Query: eq.Match("name", name),
+	}
+
+	l, t, err := eq.QueryList[Books](es, "books", esQuery)
+	if err != nil {
+		return nil, 0, err
+	}
+	return l, t, nil
+}
+
+// QueryBooksByAuthorName 根据author、name查询books的详细数据
+func QueryBooksByAuthorName(es *elasticsearch.Client, author string, name string) ([]*Books, int, error) {
+	queries := []eq.Map{
+		eq.Match("author", author),
+		eq.Match("name", name),
+	}
+	esQuery := eq.ESQuery{Query: eq.Bool(eq.WithMust(queries))}
+	fmt.Println(esQuery.JSON().String())
+	l, t, err := eq.QueryList[Books](es, "books", esQuery)
+	if err != nil {
+		return nil, 0, err
+	}
+	return l, t, nil
 }
