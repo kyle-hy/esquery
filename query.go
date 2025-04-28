@@ -9,8 +9,9 @@ type Map = map[string]any
 
 // Query 查询信息，用于重入如分页查询等
 type Query struct {
-	Index string   `json:"index,omitempty"` // 查询的索引名
-	DSL   *ESQuery `json:"dsl,omitempty"`   // 查询语句DSL
+	Index   string   `json:"index,omitempty"`   // 查询的索引名
+	DSL     *ESQuery `json:"dsl,omitempty"`     // 查询语句DSL
+	Comment string   `json:"comment,omitempty"` // 查询注释
 }
 
 // Data 查询信息，用于重入如分页查询等

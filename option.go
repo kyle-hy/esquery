@@ -20,7 +20,7 @@ func WithMust(value any) Option {
 	}
 }
 
-// WithShould Bool查询的should子句
+// WithShould Bool查询的should子句,没有must则至少满足一个should,有must则should用来加分(提升相关性)
 // @param value should查询条件
 func WithShould(value any) Option {
 	return func(m Map) {
@@ -28,7 +28,7 @@ func WithShould(value any) Option {
 	}
 }
 
-// WithFilter Bool查询的filter子句
+// WithFilter Bool查询的filter子句,作为强制条件必须满足，不参与打分，查询性能更快
 // @param value filter查询条件
 func WithFilter(value any) Option {
 	return func(m Map) {
