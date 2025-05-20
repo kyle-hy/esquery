@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.5](https://github.com/kyle-hy/esquery/compare/v1.0.4...v1.0.5) (2025-05-20)
+
+
+### Features
+
+* agg & sort ([6ea5740](https://github.com/kyle-hy/esquery/commit/6ea57400ba35299384bfa3ddace089212c18e4ee))
+* default opt ([440ab13](https://github.com/kyle-hy/esquery/commit/440ab138811791d677a7f4fcf9b71c3eed877cb6))
+* query ([793c7da](https://github.com/kyle-hy/esquery/commit/793c7dad6572c87437ecb8fadd46302627c87c53))
+
 ### [1.0.4](https://github.com/kyle-hy/esquery/compare/v1.0.3...v1.0.4) (2025-04-11)
 
 
