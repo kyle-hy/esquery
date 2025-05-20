@@ -60,6 +60,13 @@ func WithMinimumShouldMatch(value any) Option {
 	}
 }
 
+// WithMinDocCount 返回最少命中的文档数量时间区间桶”
+func WithMinDocCount(value int) Option {
+	return func(m Map) {
+		m["min_doc_count"] = value
+	}
+}
+
 // operator的枚举值
 var (
 	AND = "AND"
@@ -289,9 +296,23 @@ func WithRanges(ranges []Map) Option {
 // Histogram & Date Histogram 聚合
 
 // WithInterval 设置直方图聚合的间隔大小（适用于数值或时间字段）
-func WithInterval(interval interface{}) Option {
+func WithInterval(interval any) Option {
 	return func(m Map) {
 		m["interval"] = interval
+	}
+}
+
+// WithCalendarInterval 设置日期直方图聚合的间隔单位(date_histogram)
+func WithCalendarInterval(interval string) Option {
+	return func(m Map) {
+		m["calendar_interval"] = interval
+	}
+}
+
+// WithFixInterval 设置日期直方图聚合的固定长度间隔(date_histogram)
+func WithFixInterval(interval string) Option {
+	return func(m Map) {
+		m["fixed_interval"] = interval
 	}
 }
 
@@ -305,7 +326,7 @@ func WithTimeZone(timeZone string) Option {
 // Geo Distance 聚合
 
 // WithOrigin 设置地理距离聚合的中心点
-func WithOrigin(origin interface{}) Option {
+func WithOrigin(origin any) Option {
 	return func(m Map) {
 		m["origin"] = origin
 	}
@@ -366,7 +387,7 @@ func WithAfter(after Map) Option {
 // Missing 聚合
 
 // WithDefaultValue 设置 Missing 聚合的默认值
-func WithDefaultValue(defaultValue interface{}) Option {
+func WithDefaultValue(defaultValue any) Option {
 	return func(m Map) {
 		m["default"] = defaultValue
 	}

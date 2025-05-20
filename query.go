@@ -14,18 +14,20 @@ type Query struct {
 	Comment string   `json:"comment,omitempty"` // 查询注释
 }
 
-// Data 查询信息，用于重入如分页查询等
+// Data 查询的结果数据
 type Data struct {
-	Detail any `json:"detail,omitempty"` // 详细数据
-	Agg    any `json:"agg,omitempty"`    // 聚合数据
-	Total  int `json:"total,omitempty"`  // 总记录数
+	Detail any      `json:"detail,omitempty"` // 详细数据
+	Aggs   any      `json:"aggs,omitempty"`   // 聚合数据
+	Total  int      `json:"total,omitempty"`  // 总记录数
+	IDs    []string `json:"ids,omitempty"`    // 数据ID列表
 }
 
 // ESQuery 定义主查询结构
 type ESQuery struct {
 	Query Map   `json:"query"`          // 查询条件
 	Sort  []Map `json:"sort,omitempty"` // 排序条件
-	Agg   Map   `json:"aggs,omitempty"` // 聚合条件
+	Aggs  Map   `json:"aggs,omitempty"` // 聚合条件
+	Size  int   `json:"size,omitempty"` // 记录数
 }
 
 // JSON json序列化

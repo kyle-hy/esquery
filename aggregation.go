@@ -91,12 +91,16 @@ func PercentileRanksAgg(field string, opts ...Option) AggMap {
 
 // HistogramAgg 构造 Histogram 聚合查询, 按区间对数值字段进行聚合
 func HistogramAgg(field string, opts ...Option) AggMap {
-	return Aggregation(field, "histogram", opts...)
+	defaultOpts := []Option{WithMinDocCount(0)}
+	defaultOpts = append(defaultOpts, opts...)
+	return Aggregation(field, "histogram", defaultOpts...)
 }
 
 // DateHistogramAgg 构造 Date Histogram 聚合查询, 按日期对字段进行聚合
 func DateHistogramAgg(field string, opts ...Option) AggMap {
-	return Aggregation(field, "date_histogram", opts...)
+	defaultOpts := []Option{WithMinDocCount(0)} // 默认函数选项在最前面，若设定则被覆盖
+	defaultOpts = append(defaultOpts, opts...)
+	return Aggregation(field, "date_histogram", defaultOpts...)
 }
 
 // GeoDistanceAgg 构造 Geo Distance 聚合查询, 根据地理位置计算距离分组
