@@ -101,8 +101,8 @@ func Str2type(data, paramType string) (any, error) {
 
 }
 
-// OptParamTrim 去掉可选参数符号
-func OptParamTrim(s string) string {
+// TrimOptParam 去掉可选参数符号
+func TrimOptParam(s string) string {
 	return strings.Trim(s, "...")
 }
 

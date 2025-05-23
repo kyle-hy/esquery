@@ -38,16 +38,20 @@ func SetFunc(fi *FuncInfo) (f *FuncInfo, ok bool) {
 }
 
 // Handle 处理请求
+// query 问题
+// ps API接口及参数值列表
 func Handle(query string, ps []string) (any, error) {
 	if len(ps) == 0 {
 		return nil, fmt.Errorf("empty param")
 	}
 
+	// API接口名称
 	f, ok := handlers[ps[0]]
 	if !ok {
 		return nil, fmt.Errorf("unsupport %s", ps[0])
 	}
 
+	// 根据API参数说明转换入参格式
 	args, err := paramConv(query, ps[1:], f.Params)
 	if err != nil {
 		return nil, err
