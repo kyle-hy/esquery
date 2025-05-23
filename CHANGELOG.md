@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.9](https://github.com/kyle-hy/esquery/compare/v1.0.8...v1.0.9) (2025-05-23)
+
+
+### Bug Fixes
+
+* aggs interface ([b28a71f](https://github.com/kyle-hy/esquery/commit/b28a71fb48c743ce09c0b4e4d833be0ffa2cb1b5))
+
 ### [1.0.8](https://github.com/kyle-hy/esquery/compare/v1.0.7...v1.0.8) (2025-05-23)
 
 
