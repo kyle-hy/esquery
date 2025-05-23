@@ -30,7 +30,7 @@ func Aggregation(field, aggType string, opts ...Option) AggMap {
 	}
 
 	// 默认字段参数
-	agg[aggName].(AggMap)[aggType].(AggMap)["field"] = field
+	agg[aggName].(AggMap)[aggType].(Map)["field"] = field
 	return agg
 }
 
