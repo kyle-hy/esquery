@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [1.0.6](https://github.com/kyle-hy/esquery/compare/v1.0.5...v1.0.6) (2025-05-23)
+
+
+### Features
+
+* register ([2f81efe](https://github.com/kyle-hy/esquery/commit/2f81efe561725c01a0507b7ae4789b66a1093ef7))
+
 ### [1.0.5](https://github.com/kyle-hy/esquery/compare/v1.0.4...v1.0.5) (2025-05-20)
 
 
