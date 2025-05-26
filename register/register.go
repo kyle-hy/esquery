@@ -65,7 +65,7 @@ func Handle(query string, ps []string) (any, error) {
 	result := map[string]any{
 		"api":     f.Name,
 		"comment": f.Comment,
-		"detail":  Condition{"cond": out[0].Interface(), "data": out[1].Interface()},
+		"detail":  Condition{"data": out[0].Interface(), "query": out[1].Interface()},
 	}
 	return result, nil
 }

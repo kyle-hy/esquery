@@ -55,7 +55,7 @@ func TestEsQuery() {
 	esQuery := eq.ESQuery{
 		Query: eq.Bool(eq.WithMust(mustQueries), eq.WithShould(shouldQueries), eq.WithFilter(filterQueries), eq.WithMustNot(mustNotQueries)),
 		Sort:  sort,
-		Aggs:  aggs,
+		Aggs:  aggs.Aggs,
 	}
 
 	// 输出查询 JSON
@@ -193,7 +193,7 @@ func main() {
 	esQuery := eq.ESQuery{
 		// Query: eq.Bool(eq.WithMust([]eq.Map{eq.Match("name", "snow")})),
 		Query: eq.Match("name", "snow"),
-		Aggs:  eq.TermsAgg("name.keyword", eq.WithSize(8)),
+		Aggs:  eq.TermsAgg("name.keyword", eq.WithSize(8)).Aggs,
 	}
 	fmt.Println(esQuery.JSON())
 
