@@ -316,6 +316,11 @@ func WithFixInterval(interval string) Option {
 	}
 }
 
+// 时区
+const (
+	Shanghai = "+08:00"
+)
+
 // WithTimeZone 设置日期直方图的时区
 func WithTimeZone(timeZone string) Option {
 	return func(m Map) {

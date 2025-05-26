@@ -101,7 +101,8 @@ func HistogramAgg(field string, opts ...Option) AggsMap {
 
 // DateHistogramAgg 构造 Date Histogram 聚合查询, 按日期对字段进行聚合
 func DateHistogramAgg(field string, opts ...Option) AggsMap {
-	defaultOpts := []Option{WithMinDocCount(0)} // 默认函数选项在最前面，若设定则被覆盖
+	// 默认函数选项在最前面，若设定则会覆盖
+	defaultOpts := []Option{WithMinDocCount(0), WithTimeZone(Shanghai)}
 	defaultOpts = append(defaultOpts, opts...)
 	return Aggregation(field, "date_histogram", defaultOpts...)
 }
